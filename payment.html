@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Payment</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .summary-box {
+      border: 2px solid #4CAF50;
+      border-radius: 10px;
+      padding: 20px;
+      width: 300px;
+      margin: 40px auto;
+      background-color: #f9fff9;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .summary-box h3 {
+      color: #4CAF50;
+      text-align: center;
+    }
+    .summary-box ul {
+      list-style: none;
+      padding: 0;
+    }
+    .summary-box li {
+      padding: 10px 0;
+      border-bottom: 1px solid #ddd;
+    }
+    .success {
+      color: green;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 20px;
+    }
+    .go-home-btn {
+      display: block;
+      margin: 20px auto;
+      background-color: #2874f0;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 8px;
+      width: fit-content;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">💳 Payment</div>
+    <nav>
+      <a href="index.html">Home 🏠</a>
+      <a href="women.html">Women's Fashion 👗</a>
+      <a href="men.html">Men's Fashion 👕</a>
+    </nav>
+  </header>
+
+  <div class="summary-box">
+    <h3>Order Summary</h3>
+    <ul id="order-summary"></ul>
+    <p id="total" style="text-align:center;font-weight:bold;"></p>
+    <div class="success" id="thankYou" style="display: none;">
+      Payment Successful! ✅<br>Thank You for Ordering!
+    </div>
+    <a href="index.html" class="go-home-btn" id="homeBtn" style="display: none;">Go to Home 🏠</a>
+  </div>
+
+  <script>
+    const orderList = document.getElementById('order-summary');
+    const totalBox = document.getElementById('total');
+    const thankYou = document.getElementById('thankYou');
+    const homeBtn = document.getElementById('homeBtn');
+
+    let items = [];
+
+    const cart = JSON.parse(localStorage.getItem('cart'));
+    const singleItem = JSON.parse(localStorage.getItem('checkout'));
+
+    if (cart && cart.length > 0) {
+      items = cart;
+    } else if (singleItem) {
+      items = [singleItem];
+    }
+
+    let total = 0;
+    items.forEach(item => {
+      const li = document.createElement('li');
+      li.innerHTML = `${item.name} - Rs. ${item.price}`;
+      total += item.price;
+      orderList.appendChild(li);
+    });
+
+    totalBox.innerText = `Total: Rs. ${total}`;
+
+    // Simulate payment delay and show confirmation
+    setTimeout(() => {
+      thankYou.style.display = 'block';
+      homeBtn.style.display = 'inline-block';
+      localStorage.removeItem('cart');
+      localStorage.removeItem('checkout');
+    }, 1000); // Delay of 1 second
+  </script>
+</body>
+</html>
+
+
+
+
+

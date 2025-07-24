@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Cart</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .cart-item { border: 1px solid #ccc; padding: 10px; margin: 10px; display: flex; align-items: center; }
+    .cart-item img { width: 100px; height: 130px; object-fit: cover; margin-right: 20px; }
+    .cart-details { flex-grow: 1; }
+    .cart-actions { text-align: center; margin: 20px; }
+    .thank-you { color: green; text-align: center; margin-top: 20px; }
+    .quantity-input { width: 50px; margin-left: 10px; }
+    .navbar a span#cart-count { background: red; color: white; padding: 2px 6px; border-radius: 50%; margin-left: 5px; }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">🛒 Cart</div>
+    <nav>
+      <a href="index.html">Home 🏠</a>
+      <a href="women.html">Women's Fashion 👗</a>
+      <a href="men.html">Men's Fashion 👕</a>
+      <a href="cart.html">Cart 🛒 (<span id="cart-count">0</span>)</a>
+    </nav>
+  </header>
+
+  <h2 style="text-align:center">Your Cart Items</h2>
+  <div class="cart-items"></div>
+
+  <div class="cart-actions" id="cart-actions">
+    <button id="proceedToPayBtn">Proceed to Pay</button>
+  </div>
+
+  <script>
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartContainer = document.querySelector('.cart-items');
+
+    function updateCartCount() {
+      document.getElementById('cart-count').innerText = cartItems.length;
+    }
+
+    updateCartCount();
+
+    if (cartItems.length === 0) {
+      cartContainer.innerHTML = '<p style="text-align:center">Your cart is empty.</p>';
+      document.getElementById('cart-actions').style.display = 'none';
+    } else {
+      cartItems.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+          <input type="checkbox" id="select-${index}" class="item-select" data-index="${index}" style="margin-right:10px" checked>
+          <img src="${item.image}" alt="${item.name}">
+          <div class="cart-details">
+            <h4>${item.name}</h4>
+            <p>Price: Rs. ${item.price}</p>
+            <label>Quantity:
+              <input type="number" class="quantity-input" id="qty-${index}" value="1" min="1">
+            </label>
+          </div>
+        `;
+        cartContainer.appendChild(div);
+      });
+    }
+
+    document.getElementById('proceedToPayBtn').addEventListener('click', () => {
+      const checkboxes = document.querySelectorAll('.item-select:checked');
+      if (checkboxes.length === 0) {
+        alert('Please select at least one item to proceed.');
+        return;
+      }
+
+      let total = 0;
+      checkboxes.forEach(cb => {
+        const index = parseInt(cb.getAttribute('data-index'));
+        const qty = parseInt(document.getElementById(`qty-${index}`).value);
+        total += cartItems[index].price * qty;
+      });
+
+      const confirmationSection = document.createElement('div');
+      confirmationSection.className = 'thank-you';
+      confirmationSection.innerHTML = `
+        <h3>Payment Successful ✅</h3>
+        <p><strong>Total Paid:</strong> Rs. ${total}</p>
+        <h2>Thank You for Ordering!</h2>
+        <button onclick="window.location.href='index.html'" style="background:#2874f0; color:white; border:none; padding:10px 20px; margin-top:10px; border-radius:6px;">Go to Home</button>
+      `;
+
+      cartContainer.innerHTML = '';
+      cartContainer.appendChild(confirmationSection);
+      document.getElementById('cart-actions').style.display = 'none';
+      localStorage.removeItem('cart');
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
